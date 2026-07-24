@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minha Carteira Inteligente</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
+        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; margin-top: 10px; background: #2ecc71; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; }
+        button:hover { background: #27ae60; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+        th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+        #resumo { margin-top: 20px; padding: 15px; background: #e8f5e9; border-left: 5px solid #2ecc71; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Carteira de Investimentos</h2>
+    <input type="text" id="ativo" placeholder="Ativo (ex: PETR4, HGLG11)">
+    <input type="number" id="qtd" placeholder="Quantidade">
+    <input type="number" id="preco" placeholder="Preço Médio (R$)">
+    <input type="number" id="divsAnual" placeholder="Dividendo/Cota (R$ anual)">
+    
+    <button onclick="adicionar()">Adicionar à Carteira</button>
+
+    <table>
+        <thead>
+            <tr><th>Ativo</th><th>Qtd</th><th>Total Invest.</th><th>Total Rec.</th><th>DY</th></tr>
+        </thead>
+        <tbody id="tabela"></tbody>
+    </table>
+
+    <div id="resumo">
+        Total Investido: R$ 0.00 | Total de Dividendos: R$ 0.00
+    </div>
+</div>
+
+<script>
+    let valorTotalInvestido = 0;
+    let totalDividendosRecebidos = 0;
+
+    function adicionar() {
+        let ativo = document.getElementById('ativo').value;
+        let qtd = parseFloat(document.getElementById('qtd').value);
+        let preco = parseFloat(document.getElementById('preco').value);
+        let divsAnual = parseFloat(document.getElementById('divsAnual').value) || 0;
+        
+        if(!ativo || isNaN(qtd) || isNaN(preco)) return alert("Preencha Ativo, Qtd e Preço!");
+
+        // Cálculos
+        let totalLinha = qtd * preco;
+        let totalRecebidoLinha = qtd * divsAnual;
+        let dy = (divsAnual / preco) * 100;
+        let displayDy = isNaN(dy) ? "0.00%" : dy.toFixed(2) + "%";
+
+        // Atualizar Tabela
+        let tabela = document.getElementById('tabela');
+        tabela.innerHTML += `
+            <tr>
+                <td>${ativo}</td>
+                <td>${qtd}</td>
+                <td>R$ ${totalLinha.toFixed(2)}</td>
+                <td>R$ ${totalRecebidoLinha.toFixed(2)}</td>
+                <td>${displayDy}</td>
+            </tr>`;
+        
+        // Atualizar Totais Gerais
+        valorTotalInvestido += totalLinha;
+        totalDividendosRecebidos += totalRecebidoLinha;
+        
+        document.getElementById('resumo').innerText = 
+            `Total Investido: R$ ${valorTotalInvestido.toFixed(2)} | Total de Dividendos: R$ ${totalDividendosRecebidos.toFixed(2)}`;
+        
+        // Limpar campos
+        document.getElementById('ativo').value = '';
+        document.getElementById('qtd').value = '';
+        document.getElementById('preco').value = '';
+        document.getElementById('divsAnual').value = '';
+    }
+</script>
+
+</body>
+</html>
